@@ -72,9 +72,10 @@ class InviteResource extends Resource
                     TextInput::make('code')
                         ->required()
                         ->maxLength(255)
-                        ->default(fn() => strtoupper(\Illuminate\Support\Str::uuid()))
+                        ->default(fn() => strtoupper(Str::uuid()))
                         ->disabled()
                         ->dehydrated(),
+
 
                     Forms\Components\View::make('filament.forms.components.qr-code'),
                 ])->columns(2),
