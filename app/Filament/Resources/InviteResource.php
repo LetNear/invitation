@@ -3,17 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InviteResource\Pages;
-use App\Filament\Resources\InviteResource\RelationManagers;
 use App\Models\Invite;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\View;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class InviteResource extends Resource
 {
@@ -25,28 +25,60 @@ class InviteResource extends Resource
     {
         return $form
             ->schema([
-               Select::make('event_id')
+                Select::make('event_id')
                     ->relationship('event', 'name')
                     ->required()
                     ->searchable()
                     ->preload(),
+
                 Select::make('guest_id')
                     ->relationship('guest', 'name')
                     ->required()
                     ->searchable()
                     ->preload(),
+
                 Forms\Components\TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('pending'),
+
                 TextInput::make('rsvp_count')
                     ->numeric()
                     ->minValue(0)
                     ->default(0)
-                    ->required(),
-                Forms\Components\TextInput::make('code')
                     ->required()
-                    ->maxLength(255),
+                    ->helperText(function (\Filament\Forms\Get $get) {
+                        $guest = \App\Models\Guest::find($get('guest_id'));
+                        return $guest ? 'Max allowed: ' . $guest->rsvp_limit : null;
+                    })
+                    ->rules([
+                        function (\Filament\Forms\Get $get) {
+                            return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                $guestId = $get('guest_id');
+
+                                if (!$guestId || !is_numeric($value)) {
+                                    return;
+                                }
+
+                                $guest = \App\Models\Guest::find($guestId);
+                                if ($guest && $value > $guest->rsvp_limit) {
+                                    $fail("RSVP count exceeds the guest's RSVP limit of {$guest->rsvp_limit}.");
+                                }
+                            };
+                        },
+                    ]),
+
+                Group::make([
+                    TextInput::make('code')
+                        ->required()
+                        ->maxLength(255)
+                        ->default(fn() => strtoupper(\Illuminate\Support\Str::uuid()))
+                        ->disabled()
+                        ->dehydrated(),
+
+                    Forms\Components\View::make('filament.forms.components.qr-code'),
+                ])->columns(2),
+
             ]);
     }
 
@@ -54,29 +86,13 @@ class InviteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('event_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('guest_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('rsvp_count')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('code')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('event.name')->label('Event'),
+                Tables\Columns\TextColumn::make('guest.name')->label('Guest'),
+                Tables\Columns\TextColumn::make('status')->searchable(),
+                Tables\Columns\TextColumn::make('rsvp_count')->searchable(),
+                Tables\Columns\TextColumn::make('code')->copyable(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -90,9 +106,7 @@ class InviteResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
