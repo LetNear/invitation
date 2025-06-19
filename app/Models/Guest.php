@@ -3,16 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Guest extends Model
 {
-    use HasFactory;
+    
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'status', // e.g., pending, accepted
+        'rsvp_limit',
+    ];
 
-    protected $fillable = ['name', 'email', 'rsvp_count', 'invitation_id'];
-
-    public function invitation()
+    public function events()
     {
-        return $this->belongsTo(Invitation::class);
+        return $this->belongsToMany(Event::class, 'invites')
+            ->withPivot('status', 'rsvp_count', 'code')
+            ->withTimestamps();
+    }
+
+    public function invites()
+    {
+        return $this->hasMany(Invite::class);
     }
 }
