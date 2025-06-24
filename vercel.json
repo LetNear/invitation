@@ -1,0 +1,39 @@
+{
+    "version": 2,
+      "framework": null,
+    "functions": {
+        "api/index.php": { "runtime": "vercel-php@0.6.0" }
+    },
+    "routes": [{
+        "src": "/(.*)",
+        "dest": "/api/index.php"
+    }],
+   "env": {
+    "APP_NAME": "Laravel",
+    "APP_ENV": "production",
+    "APP_KEY": "base64:x73rOG+yVjS43642zvApJJKX6Sv1dIxpZzUrRtPhey4=", 
+    "APP_DEBUG": "false",
+    "APP_URL": "https://your-laravel-domain.vercel.app",
+
+    "LOG_CHANNEL": "stderr",
+    "LOG_LEVEL": "debug",
+
+    "DB_CONNECTION": "mysql",
+    "DB_HOST": "your-db-host",
+    "DB_PORT": "3306",
+    "DB_DATABASE": "amir",
+    "DB_USERNAME": "root",
+    "DB_PASSWORD": "",
+
+    "CACHE_DRIVER": "array",
+    "SESSION_DRIVER": "cookie",
+    "QUEUE_CONNECTION": "sync",
+
+    "APP_CONFIG_CACHE": "/tmp/config.php",
+    "APP_EVENTS_CACHE": "/tmp/events.php",
+    "APP_PACKAGES_CACHE": "/tmp/packages.php",
+    "APP_ROUTES_CACHE": "/tmp/routes.php",
+    "APP_SERVICES_CACHE": "/tmp/services.php",
+    "VIEW_COMPILED_PATH": "/tmp"
+  }
+}
