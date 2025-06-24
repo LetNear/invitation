@@ -29,4 +29,6 @@ class Event extends Model
     {
         return $this->hasMany(Invite::class);
     }
+
+   
 }

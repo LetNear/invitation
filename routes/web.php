@@ -27,5 +27,5 @@ Route::get('/', function () {
 
 
 // Route::get('/birthday-invite/{code}', [InvitationController::class, 'show'])->name('invite.birthday');
-
+Route::post('/invite/{code}/rsvp', [InvitationController::class, 'rsvp'])->name('invite.rsvp');
 Route::get('/invite/{code}', [InvitationController::class, 'show'])->name('invite.show');
