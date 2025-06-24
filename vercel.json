@@ -4,13 +4,6 @@
     "functions": {
         "api/index.php": { "runtime": "vercel-php@0.6.0" }
     },
-     "builds": [
-    {
-      "src": "api/index.php",
-      "use": "vercel-php@0.6.0"
-    }
-  ],
-  "buildCommand": "composer install && npm install && npm run build",
     "routes": [{
         "src": "/(.*)",
         "dest": "/api/index.php"
