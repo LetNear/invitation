@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Builder;
 class Guest extends Model
 {
     
@@ -13,6 +13,7 @@ class Guest extends Model
         'phone',
         'status', // e.g., pending, accepted
         'rsvp_limit',
+        'affiliation', // e.g., Ninong, Ninang, Kuya, Ate, Tito, Tita
     ];
 
     public function events()
@@ -25,5 +26,10 @@ class Guest extends Model
     public function invites()
     {
         return $this->hasMany(Invite::class);
+    }
+
+        public function scopeWithoutInvites(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('invites');
     }
 }

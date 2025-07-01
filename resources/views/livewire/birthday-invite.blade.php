@@ -15,7 +15,8 @@
     <style>
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #8ec5fc 0%, #e0c3fc 100%);
+            background: url('/images/bg2.jpg') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
             min-height: 100vh;
             display: flex;
@@ -28,16 +29,21 @@
         .invite-container {
             max-width: 600px;
             width: 100%;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.95);
+            /* Increase transparency */
             border-radius: 18px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             padding: 40px 35px 35px;
             text-align: center;
             transition: box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            /* Add background blur */
         }
 
         .invite-container:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            transform: scale(1.02);
+            /* Subtle scaling for interaction */
         }
 
         .banner {
@@ -47,6 +53,11 @@
             border-radius: 14px;
             margin-bottom: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .banner:hover {
+            transform: scale(1.05);
         }
 
         h1 {
@@ -55,6 +66,8 @@
             margin-bottom: 15px;
             color: #333;
             letter-spacing: 0.03em;
+            text-transform: uppercase;
+            /* Add uppercase styling */
         }
 
         h2 {
@@ -76,7 +89,9 @@
 
         .icon {
             font-size: 1.4rem;
-            color: #4a90e2;
+            color: #ffa500;
+            animation: bounce 1.5s infinite;
+            /* Add bounce animation */
         }
 
         /* Form styles */
@@ -141,17 +156,39 @@
             padding: 14px 0;
             border-radius: 12px;
             font-weight: 700;
-            background-color: #4a90e2;
-            border-color: #4a90e2;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #ffa500;
+            border-color: #ffa500;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
         }
 
         button.btn-primary:hover,
         button.btn-primary:focus {
-            background-color: #357abd;
-            border-color: #357abd;
-            box-shadow: 0 6px 20px rgba(53, 122, 189, 0.6);
+            background-color: #ff7b00;
+            border-color: #ff7b00;
+            box-shadow: 0 6px 20px rgba(255, 123, 0, 0.6);
+            transform: translateY(-2px);
+            /* Add subtle lift effect */
             outline: none;
+        }
+
+        /* Keyframes for bounce animation */
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
         }
 
         /* Responsive */
@@ -197,12 +234,11 @@
 
 <body>
     <div class="invite-container animate__animated animate__fadeIn">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
-            alt="Birthday party balloons and decorations" class="banner"
-            onerror="this.onerror=null; this.src='https://via.placeholder.com/600x250?text=Birthday+Party';" />
+        <img src="/images/amir_landscape.jpg" alt="Birthday Banner" class="banner img-fluid" />
+
 
         <h1>You're Invited!</h1>
-        <h2>Join us for {{ $invite->event->name ?? 'Unknown' }}’s 1st Birthday!</h2>
+        <h2>Join us for {{ $invite->event->name ?? 'Unknown' }}</h2>
 
         <p title="Event Date">
             <i class="fas fa-calendar-alt icon" aria-hidden="true"></i>

@@ -32,15 +32,22 @@ class InviteResource extends Resource
                     ->preload(),
 
                 Select::make('guest_id')
-                    ->relationship('guest', 'name')
+                    ->relationship('guest', 'name', function ($query) {
+                        $query->whereDoesntHave('invites');
+                    })
                     ->required()
                     ->searchable()
                     ->preload(),
 
-                Forms\Components\TextInput::make('status')
+                Select::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'accepted' => 'Accepted',
+                        'declined' => 'Declined',
+                    ])
+                    ->default('pending')
                     ->required()
-                    ->maxLength(255)
-                    ->default('pending'),
+                    ->helperText('The status of the invite. Pending means the guest has not responded yet, accepted means they have confirmed attendance, and declined means they have declined the invite.'),
 
                 TextInput::make('rsvp_count')
                     ->numeric()

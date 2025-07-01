@@ -5,61 +5,64 @@
 
     // Define template and display size
     $templateSize = 800; // To match the template's size
-    $displaySize = 400; // Adjust for screen display
+$displaySize = 400; // Adjust for screen display
 
-    // Generate the QR code SVG
-    $qrSvgRaw = $url ? QrCode::size(322)->generate($url) : ''; // Size to fit within placeholder
+// Generate the QR code SVG
+$qrSvgRaw = $url ? QrCode::size(322)->generate($url) : ''; // Size to fit within placeholder
 
-    if ($qrSvgRaw) {
-        $templateImagePath = public_path('images/template.png');
-        $templateDataUri = '';
+if ($qrSvgRaw) {
+    $templateImagePath = public_path('images/template.png');
+    $templateDataUri = '';
 
-        if (file_exists($templateImagePath)) {
-            $templateData = base64_encode(file_get_contents($templateImagePath));
-            $mimeType = mime_content_type($templateImagePath);
-            $templateDataUri = "data:$mimeType;base64,$templateData";
-        }
+    if (file_exists($templateImagePath)) {
+        $templateData = base64_encode(file_get_contents($templateImagePath));
+        $mimeType = mime_content_type($templateImagePath);
+        $templateDataUri = "data:$mimeType;base64,$templateData";
+    }
 
-        // Fine-tuning placement
-        $x = 239; // Keep as it is
-        $y = 260; // Adjust upwards for better fit
+    // Fine-tuning placement
+    $x = 239; // Keep as it is
+    $y = 260; // Adjust upwards for better fit
 
-        // Add guest name
-        $guestName = $record->guest->name ?? 'Guest';
-        $fontSize = 20;
-        $textYPosition = $y + 360; // Position below the QR code
+    // Add guest name
+    $guestName = $record->guest->name ?? 'Guest';
+    $guestAffiliation = $record->guest->affiliation ?? '';
+    $fontSize = 20;
+    $textYPosition = $y + 360; // Position below the QR code
 
-        // Combine template and QR, including guest name
-        $qrSvg =
-            '<svg xmlns="http://www.w3.org/2000/svg" width="' .
-            $templateSize .
-            '" height="' .
-            $templateSize .
-            '">
-                <image href="' .
-            $templateDataUri .
-            '" x="0" y="0" height="' .
-            $templateSize .
-            '" width="' .
-            $templateSize .
-            '" />
-                <g transform="translate(' .
-            $x .
-            ',' .
-            $y .
-            ')">' .
-            $qrSvgRaw .
-            '</g>
-                <text x="' .
-            $templateSize/2 .
-            '" y="' .
-            $textYPosition .
-            '" font-size="' .
-            $fontSize .
-            '" text-anchor="middle" fill="black">' .
-            $guestName .
-            '</text>
-            </svg>';
+    // Combine template and QR, including guest name
+    $qrSvg =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="' .
+        $templateSize .
+        '" height="' .
+        $templateSize .
+        '">
+                    <image href="' .
+        $templateDataUri .
+        '" x="0" y="0" height="' .
+        $templateSize .
+        '" width="' .
+        $templateSize .
+        '" />
+                    <g transform="translate(' .
+        $x .
+        ',' .
+        $y .
+        ')">' .
+        $qrSvgRaw .
+        '</g>
+                    <text x="' .
+        $templateSize / 2 .
+        '" y="' .
+        $textYPosition .
+        '" font-size="' .
+        $fontSize .
+        '" text-anchor="middle" fill="black">' .
+        $guestAffiliation .
+        ' ' .
+        $guestName .
+        '</text>
+                </svg>';
     }
 @endphp
 
@@ -104,7 +107,9 @@
 
         const svgData = new XMLSerializer().serializeToString(svgElement);
         const img = new Image();
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const svgBlob = new Blob([svgData], {
+            type: 'image/svg+xml;charset=utf-8'
+        });
         const url = URL.createObjectURL(svgBlob);
 
         img.onload = function() {

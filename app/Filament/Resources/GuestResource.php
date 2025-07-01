@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GuestResource\Pages;
 use App\Filament\Resources\GuestResource\RelationManagers;
 use App\Models\Guest;
+use Dom\Text;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -33,6 +34,18 @@ class GuestResource extends Resource
                     ->email()
                     ->maxLength(255)
                     ->default(null),
+                Forms\Components\Select::make('affiliation')
+                    ->options([
+                        'Ninong' => 'Ninong',
+                        'Ninang' => 'Ninang',
+                        'Kuya' => 'Kuya',
+                        'Ate' => 'Ate',
+                        'Tito' => 'Tito',
+                        'Tita' => 'Tita',
+                        '' => '',
+                    ])
+                    ->default('self')
+                    ->required(),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
@@ -45,7 +58,7 @@ class GuestResource extends Resource
                     ])
                     ->default('pending')
                     ->required(),
-               TextInput::make('rsvp_limit')
+                TextInput::make('rsvp_limit')
                     ->numeric()
                     ->minValue(0)
                     ->default(0)
@@ -63,7 +76,7 @@ class GuestResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\TextColumn::make('affiliation')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('rsvp_limit')
                     ->searchable(),
